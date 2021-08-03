@@ -9,20 +9,27 @@ const typeDefs = gql`
 # clients can execute, along with the return type for each. In this
 # case, the "books" query returns an array of zero or more Books (defined above).
 type Query {
-  books: [Book]
-  book(id: String!): Book
+  allBooks(last: Int): [Book!]!
+  # allAuthors(last: Int): [Author!]!
 }
-  # This "Book" type defines the queryable fields for every book in our data source.
-  type Book {
-    id: String!
-    title: String!
-    author: String!
-  }
 
-  type Mutation {
-    addBook(type: String!): Book
-    updateBook(id: String!, type: String!): Book
-  }
+type Mutation {
+  addBook(title: String!, author: String!): Book!
+  updateBook(id: ID!, title: String!, author: String!): Book!
+  deleteBook(id: ID!): Book!
+}
+
+# This "Book" type defines the queryable fields for every book in our data source.
+type Book {
+  id: ID!
+  title: String!
+  author: String!
+}
+
+# type Author {
+#  name: String!
+#  books: [Book!]!
+# }
 `;
 
 const cache = new LRU({ max: 50, maxAge: 1000 * 60 * 60 });
@@ -49,6 +56,9 @@ const resolvers = {
       const book = {type, id}
       cache.set(id, type)
       return book
+    },
+    deleteBook: (_, {type}) => {
+      id
     }
   }
 };
