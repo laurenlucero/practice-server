@@ -1,6 +1,4 @@
 const { ApolloServer, gql } = require('apollo-server');
-const LRU = require("lru-cache");
-const { generate } = require("shortid");
 
 // A schema is a collection of type definitions (hence "typeDefs") 
 // together they define the "shape" of queries that are executed against your data
@@ -9,58 +7,30 @@ const typeDefs = gql`
 # clients can execute, along with the return type for each. In this
 # case, the "books" query returns an array of zero or more Books (defined above).
 type Query {
-  allBooks(last: Int): [Book!]!
-  # allAuthors(last: Int): [Author!]!
+  books: [Book]
+  authors: [Author]
 }
 
 type Mutation {
-  addBook(title: String!, author: String!): Book!
-  updateBook(id: ID!, title: String!, author: String!): Book!
-  deleteBook(id: ID!): Book!
+  addBook(title: String, author: String): Book
 }
 
 # This "Book" type defines the queryable fields for every book in our data source.
 type Book {
-  id: ID!
-  title: String!
-  author: String!
+  title: String
+  author: Author
 }
 
-# type Author {
-#  name: String!
-#  books: [Book!]!
-# }
+type Author {
+  name: String
+  books: [Book]
+}
 `;
-
-const cache = new LRU({ max: 50, maxAge: 1000 * 60 * 60 });
 
 const resolvers = {
   Query: {
-    books: () => {
-      const books = []
-      cache.forEach((type, id) => books.push({ type, id }))
-      return books
-    },
-    book: (_, {id}) => {
-      return {id, type: cache.get(id)}
-    }
+    books: () => books,
   },
-  Mutation: {
-    addBook: (_, {type}) => {
-      const id = generate()
-      const book = {type, id}
-      cache.set(id, type)
-      return todo
-    },
-    updateBook: (_, {type, id}) => {
-      const book = {type, id}
-      cache.set(id, type)
-      return book
-    },
-    deleteBook: (_, {type}) => {
-      id
-    }
-  }
 };
 
 // The ApolloServer constructor requires two parameters: 
@@ -71,3 +41,15 @@ const server = new ApolloServer({ typeDefs, resolvers });
 server.listen().then(({ url }) => {
   console.log(`🚀  Server ready at ${url}`);
 });
+
+// example data
+const books = [
+  {
+    title: 'The Awakening',
+    author: 'Kate Chopin',
+  },
+  {
+    title: 'City of Glass',
+    author: 'Paul Auster',
+  },
+];
