@@ -31,6 +31,18 @@ const resolvers = {
   Query: {
     books: () => books,
   },
+  Mutation: {
+    addBook: (root, args) => {
+      const newBook = {
+        title: args.title,
+        author: {
+          name: args.author
+        }
+      }
+      books.push(newBook)
+      return newBook
+    }
+  }
 };
 
 // The ApolloServer constructor requires two parameters: 
@@ -46,10 +58,14 @@ server.listen().then(({ url }) => {
 const books = [
   {
     title: 'The Awakening',
-    author: 'Kate Chopin',
+    author: {
+      name: 'Kate Chopin',
+    }
   },
   {
     title: 'City of Glass',
-    author: 'Paul Auster',
+    author: {
+      name: 'Paul Auster',
+    }
   },
 ];
