@@ -12,7 +12,7 @@ type Query {
 }
 
 type Mutation {
-  addBook(title: String, author: String): Book
+  addBook(title: String!, author: String!): Book
 }
 
 # This "Book" type defines the queryable fields for every book in our data source.
@@ -57,15 +57,15 @@ server.listen().then(({ url }) => {
 // example data
 const books = [
   {
-    title: 'The Awakening',
+    title: 'How To Break Up With Your Phone',
     author: {
-      name: 'Kate Chopin',
+      name: 'Catherine Price',
     }
   },
   {
-    title: 'City of Glass',
+    title: 'Atomic Habits',
     author: {
-      name: 'Paul Auster',
+      name: 'James Clear',
     }
   },
 ];
